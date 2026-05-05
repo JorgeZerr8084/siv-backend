@@ -25,20 +25,38 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Código inválido' });
   }
 
-  // 🔥 RESET REAL
+  // 🔥 RESET
   if (value === 'RESET') {
     await db.query('DELETE FROM license');
     return res.json({ success: true, reset: true });
   }
 
-  // ✅ LICENCIA NORMAL
   const now = Date.now();
+
+  // 🔎 traer licencia actual
+  const existing = await db.query('SELECT * FROM license LIMIT 1');
+  const current = existing.rows[0];
+
+  let baseDate = now;
+
+  if (current && current.date && current.days) {
+    const exp = Number(current.date) + (current.days * 86400000);
+
+    // 👉 si todavía no venció, acumula desde la fecha de expiración
+    if (exp > now) {
+      baseDate = exp;
+    }
+  }
+
+  // 🔥 sumar días correctamente
+  const newExp = baseDate + (value * 86400000);
+  const totalDays = Math.ceil((newExp - now) / 86400000);
 
   await db.query('DELETE FROM license');
 
   const result = await db.query(
     'INSERT INTO license (key, date, days) VALUES ($1,$2,$3) RETURNING *',
-    [key, now, value]
+    [key, now, totalDays]
   );
 
   res.json(result.rows[0]);
