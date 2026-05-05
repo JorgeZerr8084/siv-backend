@@ -16,9 +16,8 @@ router.post('/', async (req, res) => {
     'Activate1Month.!': 30,
     'Activate2Month.!': 60,
     'Activate3Month.!': 90,
-    'RESET': -999
+    'RESET': -9999
   };
-  const days = 0;
   const days = CODES[key];
 
   if (!days) {
