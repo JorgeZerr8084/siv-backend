@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 // 🔹 RUTAS REALES
 app.use('/api/sales', require('./routes/sales'));
 app.use('/api/license', require('./routes/license'));
+app.use('/api/products', require('./routes/products'));
 
 // 🔹 ARRANCAR SERVIDOR (ESTO ES LO QUE TE FALTA)
 app.listen(process.env.PORT, () => {

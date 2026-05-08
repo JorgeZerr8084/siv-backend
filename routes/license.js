@@ -39,14 +39,20 @@ router.post('/', async (req, res) => {
 
   let baseDate = now;
 
-  if (current && current.date && current.days) {
-    const exp = Number(current.date) + (current.days * 86400000);
+if (current) {
+  const currentDate = Number(current.date);
+  const currentDays = Number(current.days);
 
-    // 👉 si todavía no venció, acumula desde la fecha de expiración
+  if (!isNaN(currentDate) && !isNaN(currentDays)) {
+    const exp = currentDate + (currentDays * 86400000);
+
     if (exp > now) {
       baseDate = exp;
     }
   }
+}
+
+  
 
   // 🔥 sumar días correctamente
   const newExp = baseDate + (value * 86400000);
