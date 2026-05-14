@@ -66,20 +66,47 @@ router.post('/', async (req, res) => {
 // ===============================
 // ANULAR VENTA
 // ===============================
+// ===============================
+// ANULAR VENTA
+// ===============================
 router.patch('/:id/cancel', async (req, res) => {
 
-  const { id } = req.params;
+  try {
 
-  const result = await db.query(
-    `UPDATE sales
-     SET canceled = true
-     WHERE id = $1
-     RETURNING *`,
-    [id]
-  );
+    const id = Number(req.params.id);
 
-  res.json(result.rows[0]);
+    console.log('🔥 Cancelando venta ID:', id);
+
+    const result = await db.query(
+      `UPDATE sales
+       SET canceled = true
+       WHERE id = $1
+       RETURNING *`,
+      [id]
+    );
+
+    // 🚨 NO ENCONTRÓ
+    if (result.rows.length === 0) {
+
+      return res.status(404).json({
+        error: 'Venta no encontrada'
+      });
+
+    }
+
+    console.log('✅ Venta anulada:', result.rows[0]);
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+
+    console.error('❌ Error anulando venta:', err);
+
+    res.status(500).json({
+      error: 'Error interno'
+    });
+
+  }
 
 });
-
 module.exports = router;
