@@ -63,4 +63,23 @@ router.post('/', async (req, res) => {
   }
 });
 
+// ===============================
+// ANULAR VENTA
+// ===============================
+router.patch('/:id/cancel', async (req, res) => {
+
+  const { id } = req.params;
+
+  const result = await db.query(
+    `UPDATE sales
+     SET canceled = true
+     WHERE id = $1
+     RETURNING *`,
+    [id]
+  );
+
+  res.json(result.rows[0]);
+
+});
+
 module.exports = router;
